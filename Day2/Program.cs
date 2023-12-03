@@ -25,5 +25,5 @@ using (StreamReader sr = File.OpenText(path))
         sum2 += result;
     }
 
-    Console.WriteLine("Answer Day 2 Answer 1: " + sum2);
+    Console.WriteLine("Answer Day 2 Answer 2: " + sum2);
 }

@@ -15,4 +15,4 @@ var result = cardGame.TotalWinnings(currentLint);
 sw.Stop();
 
 
-Console.WriteLine($"Answer Day 6 Answer 1: { result } time: { sw.ElapsedMilliseconds }");
+Console.WriteLine($"Answer Day 7 Answer 1: { result } time: { sw.ElapsedMilliseconds }");

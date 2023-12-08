@@ -41,9 +41,10 @@ namespace Day5
 
             foreach (Seed seed in seedRanges)
             {
+                Console.WriteLine($"Reed seed range {seed.Start} with length {seed.Length} ");
                 for(var i = 0; i < seed.Length; i++)
                 {
-                    locations.Add(mappings.GetLocation(seed.Length+i));
+                    locations.Add(mappings.GetLocation(seed.Start+i));
                 }          
             }
 

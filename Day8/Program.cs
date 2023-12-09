@@ -18,7 +18,17 @@ currentLint.RemoveAt(1);
 currentLint.RemoveAt(0);
 
 route.CreateNetwork(currentLint.ToArray());
-var result = route.Walk(directions.ToList().Select(d => d.ToString()).ToArray());
+
+var node = new NodeHistory()
+{
+    StartNode = "AAA",
+    EndNode = "ZZZ",
+    Steps = 0
+};
+
+
+var directionsIndex = route.ParseDirections(directions.Select(d => d.ToString()).ToList());
+var result = route.Walk(node, directionsIndex);
 
 sw.Stop();
 

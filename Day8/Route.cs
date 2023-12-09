@@ -1,6 +1,4 @@
-﻿
-
-namespace Day8
+﻿namespace Day8
 {
     public class NodeHistory
     {
@@ -8,7 +6,7 @@ namespace Day8
         public string EndNode { get; set; }
         public string CurrentNode { get; set; }
 
-        public bool Finished { get; set; }
+        public long Steps { get; set; }
     }
 
     public class Route
@@ -19,6 +17,11 @@ namespace Day8
             { "L", 0},
             { "R", 1}
         };
+
+        public List<int> ParseDirections(List<string> list)
+        {
+            return list.Select(i => directionMap[i]).ToList();
+        }
 
 
         public Dictionary<string, string[]> CreateNetwork(string[] data)
@@ -39,35 +42,17 @@ namespace Day8
             return netwerk;
         }
 
-        public int GhostWalk(string[] directions)
+        public long GhostWalk(string[] directions)
         {
-            var steps = 0;
             var nodes = this.LoadNodeHistory();
 
-            while (nodes.Any(n => !n.Finished))
+
+            foreach (var node in nodes)
             {
-                foreach (var direction in directions)
-                {                    
-                    var index = directionMap[direction];
-                    steps++;
-
-                    foreach (var node in nodes)
-                    {                     
-
-                        node.CurrentNode = netwerk[node.CurrentNode][index];
-                        node.Finished = node.CurrentNode.Equals(node.EndNode);
-                    }
-
-                    if (nodes.All(n => n.Finished))
-                    {
-                        break;
-                    }
-
-                   
-                }
+                Walk(node, directions.Select(d => directionMap[d]).ToList());
             }
 
-            return steps;
+            return nodes.Select(n => n.Steps).Aggregate((a, b) => a * b);
         }
 
         private List<NodeHistory> LoadNodeHistory()
@@ -81,36 +66,36 @@ namespace Day8
                 {
                     StartNode = start.Key,
                     EndNode = $"{start.Key.Substring(0, start.Key.Length - 1)}Z",
-                    CurrentNode = start.Key,
-                    Finished = false,
+                    Steps = 0                  
                 });
             }
 
             return list;
         }
 
-        public int Walk(string[] directions)
-        {
-            var steps = 0;
-            var end = true;
-            var currentLocation = "AAA";
-            while (end)
-            {
-                foreach( var direction in directions)
-                {
-                    steps = steps + 1;
-                    var index = directionMap[direction];
-                    currentLocation = netwerk[currentLocation][index];
+        public long Walk(NodeHistory node, List<int> directions)
+        {           
+            node.CurrentNode = node.StartNode;
 
-                    if (currentLocation.Equals("ZZZ"))
-                    {
-                        end = false;
-                        break;
-                    }
+            var directionIndexer = directions.GetEnumerator();
+
+
+            while (true)
+            {
+                if (!directionIndexer.MoveNext())
+                {
+                    directionIndexer = directions.GetEnumerator();
+                    directionIndexer.MoveNext();
+                }
+
+                node.Steps = node.Steps + 1;
+                node.CurrentNode = netwerk[node.CurrentNode][directionIndexer.Current];
+
+                if (node.CurrentNode.Equals(node.EndNode))
+                {
+                    return node.Steps;
                 }
             }
-
-            return steps;
         }
     }
 }

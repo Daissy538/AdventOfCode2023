@@ -38,16 +38,24 @@ namespace Day8Tests
                 "ZZZ = (ZZZ, ZZZ)"
             };
 
-            var direction = new string[]
+            var direction = new List<int>
             {
-                "R",
-                "L"
+                1,
+                0
             };
 
             var route = new Route();
 
             Dictionary<string, string[]> result = route.CreateNetwork(data);
-            var steps = route.Walk(direction);
+
+            var node = new NodeHistory()
+            {
+                StartNode = "AAA",
+                EndNode = "ZZZ",
+                Steps = 0
+            };
+
+            var steps = route.Walk(node, direction);
 
             Assert.Equal(1, steps);
         }
@@ -62,17 +70,25 @@ namespace Day8Tests
                 "ZZZ = (ZZZ, ZZZ)"
             };
 
-            var direction = new string[]
+            var direction = new List<int>
             {
-                "L",
-                "L",
-                "R"
+                0,
+                0,
+                1
             };
 
             var route = new Route();
 
             Dictionary<string, string[]> result = route.CreateNetwork(data);
-            var steps = route.Walk(direction);
+
+            var node = new NodeHistory()
+            {
+                StartNode = "AAA",
+                EndNode = "ZZZ",
+                Steps = 0
+            };
+
+            var steps = route.Walk(node, direction);
 
             Assert.Equal(6, steps);
         }
@@ -91,16 +107,24 @@ namespace Day8Tests
                 "ZZZ = (ZZZ, ZZZ)"
             };
 
-            var direction = new string[]
+            var direction = new List<int>
             {
-                "R",
-                "L"
+                1,
+                0
             };
 
             var route = new Route();
 
             Dictionary<string, string[]> result = route.CreateNetwork(data);
-            var steps = route.Walk(direction);
+
+            var node = new NodeHistory()
+            {
+                StartNode = "AAA",
+                EndNode = "ZZZ",
+                Steps = 0
+            };
+
+            var steps = route.Walk(node, direction);
 
             Assert.Equal(2, steps);
         }

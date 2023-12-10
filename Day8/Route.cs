@@ -52,7 +52,29 @@
                 Walk(node, directions.Select(d => directionMap[d]).ToList());
             }
 
-            return nodes.Select(n => n.Steps).Aggregate((a, b) => a * b);
+            return nodes.Select(n => n.Steps).Aggregate((a, b)  => FindTheSmallestCommonMultiplier(a, b));
+        }
+
+        //Smallest Common Multiplier
+        //https://www.mathsisfun.com/least-common-multiple.html
+        private long FindTheSmallestCommonMultiplier(long a, long b)
+        {
+            return a * b / FindTheGreatesttMultiplyValue(a, b);
+        }
+
+        //Algoritme Euclidean Algorithm
+        //https://www.mathsisfun.com/numbers/euclidean-algo.html
+        private long FindTheGreatesttMultiplyValue(long a, long b)
+        {
+            
+            while(b !=0)
+            {
+                var rest = a % b;
+                a = b;
+                b = rest;
+            }
+
+            return a;
         }
 
         private List<NodeHistory> LoadNodeHistory()
@@ -91,7 +113,7 @@
                 node.Steps = node.Steps + 1;
                 node.CurrentNode = netwerk[node.CurrentNode][directionIndexer.Current];
 
-                if (node.CurrentNode.Equals(node.EndNode))
+                if (node.CurrentNode.EndsWith("Z"))
                 {
                     return node.Steps;
                 }

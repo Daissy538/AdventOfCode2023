@@ -141,7 +141,6 @@
 
         public long GetLocation(long seed)
         {
-
             var soil = GetMappedVaule(SeedSoil, seed);
 
             var fert = GetMappedVaule(SoilFert, soil);
@@ -157,6 +156,36 @@
             var location = GetMappedVaule(HumidLocation, humid);
 
             return location;
+        }
+
+        public long GetLocation(Seed seed)
+        {
+            
+
+            var Cal
+        }
+        
+        private long[] CalculateNewRange(List<Map> mapping, long[] rangeToCompare)
+        {
+            var n = rangeToCompare[0];
+            var m = rangeToCompare[1];
+
+            foreach (var map in mapping)
+            {
+                var i = map.To;
+                var j = map.Length;
+
+                var newStart = n + (i - n);
+                var newLength = m + (j - m);
+                
+                var newRange = new[] { newStart, newLength};
+                
+                if (newRange[])
+                {
+                    
+                }
+
+            }
         }
 
         private long GetMappedVaule(List<Map> mapping, long number)

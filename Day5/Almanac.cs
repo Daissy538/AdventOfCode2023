@@ -14,40 +14,16 @@ namespace Day5
 
         public long ProcessFile2(List<string> data)
         {
-
             ProcessSeedRange(data[0]);
-
-            var maps = new Dictionary<string, List<string>>();
-            var mapTitle = "";
-            for (var i = 1; i < data.Count; i++)
-            {
-                if (string.IsNullOrEmpty(data[i]))
-                {
-                    mapTitle = data[i + 1];
-                    maps.Add(mapTitle, new List<string>());
-                    i = i + 1;
-                    continue;
-                }
-
-                var list = maps[mapTitle];
-                list.Add(data[i]);
-
-                maps[mapTitle] = list;
-            }
-
-            ProcessMappings(maps);
+            
+            ProcessMappings(data);
 
             var locations = new List<long>();
-
-            foreach (Seed seed in seedRanges)
+            foreach (var seed in seedRanges)
             {
-                Console.WriteLine($"Reed seed range {seed.Start} with length {seed.Length} ");
-                for(var i = 0; i < seed.Length; i++)
-                {
-                    locations.Add(mappings.GetLocation(seed.Start+i));
-                }          
+                mappings.GetLocation(seed);
             }
-
+            
             locations.Sort();
 
             return locations.First();
@@ -56,26 +32,7 @@ namespace Day5
         public long ProcessFile(List<string> data) {
 
             ProcessSeeds(data[0]);
-
-            var maps = new Dictionary<string, List<string>>();
-            var mapTitle = "";
-            for (var i = 1; i < data.Count; i++)
-            {
-                if (string.IsNullOrEmpty(data[i]))
-                {
-                    mapTitle = data[i + 1];
-                    maps.Add(mapTitle, new List<string>());
-                    i = i + 1;
-                    continue;
-                }
-
-                var list = maps[mapTitle];
-                list.Add(data[i]);
-
-                maps[mapTitle] = list;
-            }
-
-            ProcessMappings(maps);
+            ProcessMappings(data);
             
             var locations = new List<long>();
             foreach(long seed in seeds)
@@ -112,8 +69,26 @@ namespace Day5
             }
         }
 
-        private void ProcessMappings(Dictionary<string, List<string>> maps)
+        private void ProcessMappings(List<string> data)
         {
+            var maps = new Dictionary<string, List<string>>();
+            var mapTitle = "";
+            for (var i = 1; i < data.Count; i++)
+            {
+                if (string.IsNullOrEmpty(data[i]))
+                {
+                    mapTitle = data[i + 1];
+                    maps.Add(mapTitle, new List<string>());
+                    i = i + 1;
+                    continue;
+                }
+
+                var list = maps[mapTitle];
+                list.Add(data[i]);
+
+                maps[mapTitle] = list;
+            }
+            
             mappings.ReadSeedSoilMap(maps["seed-to-soil map:"]);
             mappings.ReadSoilFertMap(maps["soil-to-fertilizer map:"]);
             mappings.ReadFertWaterMap(maps["fertilizer-to-water map:"]);

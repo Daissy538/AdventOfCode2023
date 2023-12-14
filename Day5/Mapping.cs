@@ -161,8 +161,6 @@
         public long GetLocation(Seed seed)
         {
             
-
-            var Cal
         }
         
         private long[] CalculateNewRange(List<Map> mapping, long[] rangeToCompare)
@@ -180,10 +178,7 @@
                 
                 var newRange = new[] { newStart, newLength};
                 
-                if (newRange[])
-                {
-                    
-                }
+                
 
             }
         }

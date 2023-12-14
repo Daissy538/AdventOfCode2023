@@ -1,5 +1,6 @@
 using Day6;
 using FluentAssertions;
+using Xunit;
 
 namespace Day6Tests
 {

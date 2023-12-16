@@ -16,36 +16,16 @@ namespace Day10
         StartingPipe
     }
 
-    public class Node
+    public class Pipe
     {
-        public int[] Index {  get; set; }
+        public int[] Index { get; set; }
         public PipeType Type { get; set; }
-        public Node Previous { get; set; }
-        public Node? Next { get; set; }
-
-        public Node? NodeAlreadyExist(int[] index) {
-
-            if (Next == null) return Index.SequenceEqual(index) ? this : null;
-
-            return Index.SequenceEqual(index)? this : Next?.NodeAlreadyExist(index);
-        }
-
-        public long Length()
-        {
-            if (Next == null) return 1;
-            if(Next.Type == PipeType.StartingPipe)
-            {
-                return 1;
-            }
-
-            return this.Next.Length() + 1;
-        }
     }
 
     public class Ground
     {
         private List<List<PipeType>> pipes = new List<List<PipeType>>();
-        private Node? ConnectedPipes;
+        private LinkedList<Pipe> ConnectedPipes = new LinkedList<Pipe>();
         private Dictionary<string, PipeType> pipeMap = new Dictionary<string, PipeType>()
         {
             { "|", PipeType.VerticalPipe },
@@ -58,87 +38,102 @@ namespace Day10
             { "S", PipeType.StartingPipe }
         };
 
-        public Node? LoadAllConnectedPipes(int[] currentLocation, Node? existingTree)
+        public LinkedList<Pipe> LoadAllConnectedPipes(int[] currentLocation)
         {
-
-            if (currentLocation[0] < 0 || currentLocation[1] < 0)
-            {
-                return null;
-            }
-
-            var existingNode = existingTree.NodeAlreadyExist([
-                 currentLocation[0],
-                 currentLocation[1]
-            ]);
-
-            if (existingNode != null)
-            {
-                return existingNode;
-            }
-
-            var node = new Node()
+            var startNode = new Pipe()
             {
                 Index = [
                     currentLocation[0],
                     currentLocation[1]
-                    ],
+                ],
                 Type = pipes[currentLocation[0]][currentLocation[1]]
             };
 
-            var XPipe1 = node.Index[0];
-            var YPipe1 = node.Index[1];
+            ConnectedPipes.AddFirst(startNode);
 
-            var XPipe2 = node.Index[0];
-            var YPipe2 = node.Index[1];
+            LinkedListNode<Pipe> currentNode = ConnectedPipes.First;
+            var looping = true;
 
-
-            switch (node.Type)
+            while (looping)
             {
-                case PipeType.VerticalPipe:
-                    XPipe1--;
-                    XPipe2++;
-                    break;
-                case PipeType.HorizontalPipe:
-                    YPipe1--;
-                    YPipe2++;
-                    break;
-                case PipeType.NorthEastPipe:
-                    XPipe1--;
-                    YPipe2--;
-                    break;
-                case PipeType.NorthWestPipe:
-                    XPipe1--;
-                    YPipe2++;
-                    break;
-                case PipeType.SouthEastPipe:
-                case PipeType.StartingPipe:
-                    YPipe1++;
-                    XPipe2++;
-                    break;
-                case PipeType.SouthWestPipe:
-                    YPipe1--;
-                    XPipe2++;
-                    break;
-                case PipeType.Ground:
-                    return null;
-            }
-            
-            if(node.Type == PipeType.StartingPipe)
-            {
-                existingTree = node;
+                var XPipe1 = currentNode.Value.Index[0];
+                var YPipe1 = currentNode.Value.Index[1];
+
+                var XPipe2 = currentNode.Value.Index[0];
+                var YPipe2 = currentNode.Value.Index[1];
+
+
+                switch (currentNode.Value.Type)
+                {
+                    case PipeType.VerticalPipe:
+                        XPipe1--;
+                        XPipe2++;
+                        break;
+                    case PipeType.HorizontalPipe:
+                        YPipe1--;
+                        YPipe2++;
+                        break;
+                    case PipeType.NorthEastPipe:
+                        XPipe1--;
+                        YPipe2++;
+                        break;
+                    case PipeType.NorthWestPipe:
+                        XPipe1--;
+                        YPipe2--;
+                        break;
+                    case PipeType.SouthEastPipe:
+                    case PipeType.StartingPipe:
+                        XPipe1++;
+                        YPipe2++;
+                        break;
+                    case PipeType.SouthWestPipe:
+                        XPipe1++;
+                        YPipe2--;
+                        break;
+                    case PipeType.Ground:
+                        looping = false;
+                        break;
+                }
+
+                Pipe? nextPipe;
+                if (currentNode.Previous != null && !currentNode.Previous.Value.Index.SequenceEqual([XPipe1, YPipe1]))
+                {
+
+
+                    nextPipe = new Pipe()
+                    {
+                        Index = [
+                                 XPipe1,
+                            YPipe1,
+                        ],
+                        Type = pipes[XPipe1][YPipe1],
+                    };
+                }
+                else
+                {
+                    nextPipe = new Pipe()
+                    {
+                        Index = [
+                            XPipe2,
+                            YPipe2,
+                        ],
+                        Type = pipes[XPipe2][YPipe2],
+                    };
+                }
+
+                if (nextPipe.Type == PipeType.StartingPipe)
+                {
+                    looping = false;
+                }
+                else
+                {
+                    ConnectedPipes.AddAfter(currentNode, nextPipe);
+                    currentNode = ConnectedPipes.Find(nextPipe);
+                }
             }
 
-            node.Next = LoadAllConnectedPipes([XPipe1, YPipe1], existingTree);
-            node.Next = LoadAllConnectedPipes([XPipe2, YPipe2], existingTree);
-
-            if (node.Next != null)
-            {
-                node.Next.Previous = node;
-            }
-
-            return node;
+            return ConnectedPipes;
         }
-
 
         public int[] LoadGround(List<string> list)
         {
@@ -160,5 +155,12 @@ namespace Day10
 
             return startLocation;
         }
+
+        public long GetLongestPath()
+        {
+            return ConnectedPipes.Count / 2;
+        }
+
+
     }
 }

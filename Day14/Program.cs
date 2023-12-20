@@ -4,7 +4,6 @@ using System.Diagnostics;
 string path = "puzzle_input.txt";
 
 var currentLint = File.ReadLines(path).ToList();
-
 Stopwatch sw = new Stopwatch();
 sw.Start();
 var table = new Table();
@@ -22,7 +21,7 @@ Console.WriteLine(currentLint[0].Count());
 sw2.Start();
 var table2 = new Table();
 table2.LoadTable(currentLint);
-var result2 = table2.Spin(1000000000);
+var result2 = table2.Spin(1000);
 sw2.Stop();
 
 

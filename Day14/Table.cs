@@ -19,37 +19,39 @@ namespace Day14
 
         public long Spin(int times)
         {
-            var totals = new HashSet<int>();
+            var totals = new Dictionary<int, Tuple<int, long>>();
 
             var turn = 1;
 
             while(turn <= times)
             {
-                TilteNorth();
+                TilteNorth();               
                 TilteWest();
                 TilteSouth();
                 TilteEast();
-
+              
                 var score = TotalScore();
-                var postitions = GetGridHash();
-                var hash = postitions.GetHashCode();
-
+                var hash = GetGridHash();
+                                
+                Print();
                 Console.WriteLine($"Turn: {turn} Score: {score} Hash: {hash}");
-                //Print();
 
-                if (totals.Contains(hash))
+                if (totals.ContainsKey(hash))
                 {
-                    return score;
+                    totals[hash] = new Tuple<int, long>(totals[hash].Item1 + 1, totals[hash].Item2);
                 }
                 else
                 {
-                    totals.Add(hash);
-                    turn++;
+                    totals.Add(hash, new (1, score));                   
                 }
+
+                turn++;
 
             }
 
-            return 0;
+            var list = totals.Where(t => t.Value.Item1 > 1).Select(t => t.Value.Item2).ToList();
+            var half = list.Count() / 2;
+            return list[half];
         }
 
         public void TilteNorth()
@@ -96,9 +98,9 @@ namespace Day14
             return scores.Sum();
         }
 
-        public List<int[]> GetGridHash()
+        public int GetGridHash()
         {
-            var positions = new List<int[]>();
+            string text = ""; 
        
             for (int row = 0; row < table.Count; row++)
             {
@@ -106,11 +108,11 @@ namespace Day14
                 {
                     if (table[row][col].Equals("O"))
                     {
-                        positions.Add([row, col]);
-                    }
+                        text += $"{row}{col}";
+                    }                   
                 }
             }
-            return positions;
+            return text.GetHashCode();
         }
 
         public void UpdateRowWest(int row)

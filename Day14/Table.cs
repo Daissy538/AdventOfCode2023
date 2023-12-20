@@ -1,8 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using System.Text;
 
 namespace Day14
 {
+    //To High 104634
+    //To Low  104618
+    //Correct  104619
     public class Table
     {
         private List<List<string>> table = new List<List<string>>();
@@ -13,18 +18,15 @@ namespace Day14
             {
                 table.Add(line.ToCharArray().Select(l => l.ToString()).ToList());
             }
-
-            Console.WriteLine();
-            Print();
         }
 
         public long Spin(int times)
         {
-            var totals = new List<long>();
+            var totals = new HashSet<int>();
 
-            var run = true;
             var turn = 1;
-            while(run)
+
+            while(turn <= times)
             {
                 TilteNorth();
                 TilteWest();
@@ -32,38 +34,25 @@ namespace Day14
                 TilteEast();
 
                 var score = TotalScore();
-                totals.Add(score);
-                Console.WriteLine($"Turn: {turn} Score: {score}");
+                var postitions = GetGridHash();
+                var hash = postitions.GetHashCode();
 
-                var isPowerOf = (times % turn) == 0;
-                if (isPowerOf && totals.Count > 10) { 
-                    var currentValue = totals[turn-1];
-                    var previousValueIndex = -1;
-                    for(int i = turn-2; i > 0; i--)
-                    {
-                        if (currentValue == totals[i])
-                        {
-                            previousValueIndex = i;
-                            break;
-                        }                        
-                    }
+                Console.WriteLine($"Turn: {turn} Score: {score} Hash: {hash}");
+                //Print();
 
-                    var length = turn - previousValueIndex;
-                    if (previousValueIndex-length-length > 0)
-                    {
-                        var subList = totals.GetRange(previousValueIndex, length);
-                        var subList2 = totals.GetRange(previousValueIndex-(length-1), length);
-                        var subList3 = totals.GetRange(previousValueIndex - (length -1 + length - 1), length);
-
-                        if (subList.SequenceEqual(subList2) && subList3.SequenceEqual(subList3))
-                        {
-                            run = false;
-                        }
-                    }
+                if (totals.Contains(hash))
+                {
+                    return score;
                 }
-                turn++;
+                else
+                {
+                    totals.Add(hash);
+                    turn++;
+                }
+
             }
-            return totals.Last();
+
+            return 0;
         }
 
         public void TilteNorth()
@@ -109,6 +98,46 @@ namespace Day14
 
             return scores.Sum();
         }
+
+        public List<int[]> GetGridHash()
+        {
+            var positions = new List<int[]>();
+       
+            for (int row = 0; row < table.Count; row++)
+            {
+                for(int col = 0; col < table[row].Count; col++)
+                {
+                    if (table[row][col].Equals("O"))
+                    {
+                        positions.Add([row, col]);
+                    }
+                }
+            }
+            return positions;
+        }
+
+        public int GetAmountOfRocks()
+        {
+            var sum = 0;
+            for (int row = 0; row < table.Count; row++)
+            {
+                sum = sum + table[row].Count(c => c.Equals("O"));
+            }
+
+            return sum;
+        }
+
+        public int GetAmountOfBlocks()
+        {
+            var sum = 0;
+            for (int row = 0; row < table.Count; row++)
+            {
+                sum = sum + table[row].Count(c => c.Equals("#"));
+            }
+
+            return sum;
+        }
+
 
         public void UpdateRowWest(int row)
         {
@@ -285,12 +314,13 @@ namespace Day14
 
         private void Print()
         {
+            Console.WriteLine();
             foreach (var row in table)
             {
                 var stringBuilder = new StringBuilder();
                 foreach (var l in row)
                 {
-                    stringBuilder.Append(l.ToString());
+                    stringBuilder.Append(string.Join("", l));
                 }
 
                 Console.WriteLine(stringBuilder.ToString());

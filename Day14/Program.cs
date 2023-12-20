@@ -18,6 +18,7 @@ Console.WriteLine($"Answer Day 14 Answer 1: {result} time: {sw.ElapsedMillisecon
 
 
 Stopwatch sw2 = new Stopwatch();
+Console.WriteLine(currentLint[0].Count());
 sw2.Start();
 var table2 = new Table();
 table2.LoadTable(currentLint);

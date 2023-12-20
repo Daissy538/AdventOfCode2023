@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace Day14
 {
@@ -116,29 +113,6 @@ namespace Day14
             return positions;
         }
 
-        public int GetAmountOfRocks()
-        {
-            var sum = 0;
-            for (int row = 0; row < table.Count; row++)
-            {
-                sum = sum + table[row].Count(c => c.Equals("O"));
-            }
-
-            return sum;
-        }
-
-        public int GetAmountOfBlocks()
-        {
-            var sum = 0;
-            for (int row = 0; row < table.Count; row++)
-            {
-                sum = sum + table[row].Count(c => c.Equals("#"));
-            }
-
-            return sum;
-        }
-
-
         public void UpdateRowWest(int row)
         {
             var stones = new List<int>();
@@ -179,7 +153,6 @@ namespace Day14
             }
         }
 
-
         public void UpdateRowEast(int row)
         {
             var stones = new List<int>();
@@ -199,7 +172,7 @@ namespace Day14
             }
 
             stones = stones.OrderDescending().ToList();
-            //Als er een cube is
+            
             for (int i = cubes.Count - 1; i >= 0; i--)
             {
                 var nextCube = i > 0 ? cubes[i - 1] : -1;
@@ -215,7 +188,6 @@ namespace Day14
                 }
             }
 
-            //Als er geen cubes zijn zet alles zo ver mogelijk naar achter
             for (int col = 0; col < stones.Count; col++)
             {
                 var currentCol = stones[col];
@@ -325,6 +297,28 @@ namespace Day14
 
                 Console.WriteLine(stringBuilder.ToString());
             }
+        }
+
+        private int GetAmountOfRocks()
+        {
+            var sum = 0;
+            for (int row = 0; row < table.Count; row++)
+            {
+                sum = sum + table[row].Count(c => c.Equals("O"));
+            }
+
+            return sum;
+        }
+
+        private int GetAmountOfBlocks()
+        {
+            var sum = 0;
+            for (int row = 0; row < table.Count; row++)
+            {
+                sum = sum + table[row].Count(c => c.Equals("#"));
+            }
+
+            return sum;
         }
 
     }

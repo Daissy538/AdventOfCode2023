@@ -66,5 +66,29 @@ namespace Day10Tests
 
             Assert.Equal(4, result);
         }
+
+        [Fact]
+        public void Get_Amount_Of_Encloused_Titles()
+        {
+            var list = new List<string>() {
+                    "...........",
+                    ".S-------7.",
+                    ".|F-----7|.",
+                    ".||.....||.",
+                    ".||.....||.",
+                    ".|L-7.F-J|.",
+                    ".|..|.|..|.",
+                    ".L--J.L--J.",
+                    "..........."
+                    };
+
+            var ground = new Ground();
+            var start = ground.LoadGround(list);
+            ground.LoadNegatives();
+            var result = ground.GetHashCode();
+
+            Assert.Equal(4, result);
+
+        }
     }
 }

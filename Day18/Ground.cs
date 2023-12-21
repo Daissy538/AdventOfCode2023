@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Day18
 {
@@ -51,7 +50,6 @@ namespace Day18
         public double PicksTheorem(List<Tuple<int, int>> corners)
         {
             var totals = new List<int>();
-            var test = corners.Aggregate((current, next) => current.Item2 * next.Item1 - current.Item1 * next.Item2).ToList();
 
             for (var row = 0; row < corners.Count()-1; row++)
             {

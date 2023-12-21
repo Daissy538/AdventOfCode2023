@@ -1,5 +1,6 @@
 ﻿
 
+using System.Collections.Generic;
 using System.Xml.Linq;
 
 namespace Day10
@@ -13,7 +14,9 @@ namespace Day10
         SouthWestPipe,
         SouthEastPipe,
         Ground,
-        StartingPipe
+        StartingPipe,
+        WithinLoop,
+        OutSideLoop
     }
 
     public class Pipe
@@ -25,6 +28,8 @@ namespace Day10
     public class Ground
     {
         private List<List<PipeType>> pipes = new List<List<PipeType>>();
+        private List<List<PipeType>> pipesWithNegatives = new List<List<PipeType>>();
+
         private LinkedList<Pipe> ConnectedPipes = new LinkedList<Pipe>();
         private Dictionary<string, PipeType> pipeMap = new Dictionary<string, PipeType>()
         {
@@ -161,6 +166,37 @@ namespace Day10
             return ConnectedPipes.Count / 2;
         }
 
+        public void LoadNegatives()
+        {
+            
+            for (var i = 0; i < pipes.Count(); i++)
+            {
+                for(var j = 0; j < pipes[i].Count(); j++)
+                {
+                    var pipe = pipes[i][j];
 
+                    if (pipe.Equals(PipeType.Ground))
+                    {
+                        pipesWithNegatives[i].Add(PipeType.OutSideLoop);
+                    }
+                }
+                List<PipeType> pipeRow = (List<PipeType>)pipes[i].Select((c, j) => {
+                    
+                    if(c == PipeType.Ground)
+                    {
+                        return 
+                    }
+
+                    
+
+                    return pipe;
+                }).ToList();
+
+
+                pipesWithNegatives.Add(pipeRow);
+            }
+
+            return startLocation;
+        }
     }
 }

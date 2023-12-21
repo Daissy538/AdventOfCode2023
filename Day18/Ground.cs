@@ -29,24 +29,7 @@ namespace Day18
 
             return PicksTheorem(ground);
         }
-
-        public double CalFromMap(List<string> map)
-        {
-            for(var row = 0; row < map.Count; row++)
-            {
-                var items = map[row].ToCharArray().Select(c => c.ToString()).ToList();
-                for(var col = 0; col < items.Count; col++)
-                {
-                    if (items[col].Equals("#"))
-                    {
-                        ground.Add(new Tuple<int, int>(row, col));
-                    }     
-                }       
-            }
-
-            return PicksTheorem(ground);
-        }
-
+        
         public double PicksTheorem(List<Tuple<int, int>> corners)
         {
             var totals = new List<int>();

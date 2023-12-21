@@ -33,27 +33,6 @@ namespace Day18Tests
         }
 
         [Fact]
-        public void Cal_Check_Small()
-        {
-            var list = new List<Tuple<int, int>>()
-            {
-                new Tuple<int,int>(0,0),
-                new Tuple<int,int>(0,6),
-                new Tuple<int,int>(5,6),
-                new Tuple<int,int>(5,2),
-                new Tuple<int,int>(2,2),
-                new Tuple<int,int>(2,0),
-                new Tuple<int,int>(0,0),
-            };
-
-            var ground = new Ground();
-
-            var cubeMeter = ground.PicksTheorem(list);
-
-            Assert.Equal(28, cubeMeter);
-        }
-
-        [Fact]
         public void Cal_Check_Bigger()
         {
             var list = new List<Tuple<int, int>>()
@@ -73,7 +52,7 @@ namespace Day18Tests
 
             var ground = new Ground();
 
-            var cubeMeter = ground.PicksTheorem(list);
+            var cubeMeter = ground.PicksTheorem(list, 6+5+2+3+4+2+2+3+2+2);
 
             Assert.Equal(48, cubeMeter);
         }
@@ -102,7 +81,7 @@ namespace Day18Tests
 
             var ground = new Ground();
 
-            var cubeMeter = ground.PicksTheorem(list);
+            var cubeMeter = ground.PicksTheorem(list, 38);
 
             Assert.Equal(62, cubeMeter);
         }

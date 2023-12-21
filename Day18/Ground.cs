@@ -15,6 +15,7 @@ namespace Day18
             var startIndex = new Tuple<int, int>(0, 0);
             ground.Add(startIndex);
 
+            var steps = 0;
             var currentIndex = startIndex;
             for(var row = 0; row < list.Count; row++)
             {    
@@ -24,13 +25,13 @@ namespace Day18
                 var color = values[2];
 
                 currentIndex = AddNewDirections(currentIndex, int.Parse(length), direction);
-               
+                steps += int.Parse(length);
             }
 
-            return PicksTheorem(ground);
+           return PicksTheorem(ground, steps);
         }
         
-        public double PicksTheorem(List<Tuple<int, int>> corners)
+        public double PicksTheorem(List<Tuple<int, int>> corners, int steps)
         {
             var totals = new List<int>();
 
@@ -47,7 +48,7 @@ namespace Day18
             
             double area = totals.Sum() /2;
 
-            return area + (corners.Count/ 2) +1;
+            return area + (steps/ 2) +1;
         }
 
         private Tuple<int, int> AddNewDirections(Tuple<int,int> index, int length, string direction)

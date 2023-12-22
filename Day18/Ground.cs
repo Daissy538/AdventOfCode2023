@@ -3,10 +3,6 @@ using System.Drawing;
 
 namespace Day18
 {
-    //To low 13237
-    //To low 39097
-    //
-
     public class Ground
     {
         private List<Tuple<long, long>> ground = new List<Tuple<long, long>>();

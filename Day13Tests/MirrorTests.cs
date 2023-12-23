@@ -5,6 +5,66 @@ namespace Day13Tests
     public class MirrorTests
     {
         [Fact]
+        public void Find_Vertical_Mirror2()
+        {
+            var list = new List<string>()
+           {
+                "#...##..#",
+                "#....#..#",
+                "..##..###",
+                "#####.##.",
+                "#####.##.",
+                "..##..###",
+                "#....#..#"
+           };
+
+            var mirror = new Mirror();
+            var leftAmount = mirror.FindMirror2(list);
+
+            Assert.Equal(100, leftAmount);
+        }
+
+        [Fact]
+        public void Find_Vertical_Mirror2_With_Swap()
+        {
+            var list = new List<string>()
+           {
+                "#.##..##.",
+                "..#.##.#.",
+                "##..#...#",
+                "##...#..#",
+                "..#.##.#.",
+                "..##..##.",
+                "#.#.##.#."
+           };
+
+            var mirror = new Mirror();
+            var leftAmount = mirror.FindMirror2(list);
+
+            Assert.Equal(300, leftAmount);
+        }
+
+        [Fact]
+        public void Find_Horizontal_Mirror2()
+        {
+            var list = new List<string>()
+           {
+                "#.##..##.",
+                "..#.##.#.",
+                "##......#",
+                "##......#",
+                "..#.##.#.",
+                "..##..##.",
+                "#.#.##.#."
+           };
+
+            var mirror = new Mirror();
+            var leftAmount = mirror.FindMirror2(list);
+
+            Assert.Equal(300, leftAmount);
+        }
+
+        [Fact]
         public void Find_Vertical_Mirror()
         {
            var list = new List<string>()

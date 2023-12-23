@@ -17,7 +17,8 @@ Console.WriteLine($"Answer Day 15 Answer 1: {result} time: {sw.ElapsedMillisecon
 Stopwatch sw2 = new Stopwatch();
 Console.WriteLine(currentLint[0].Count());
 sw2.Start();
-var result2 = 0;
+var mirror2 = new Mirror();
+var result2 = mirror2.FindAllMirrors2(currentLint);
 sw2.Stop();
 
 

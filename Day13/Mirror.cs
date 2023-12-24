@@ -12,8 +12,6 @@ namespace Day13
     // To high    38664
     // To high    36676
 
-
-
     public class Mirror
     {
         public long FindAllMirrors2(List<string> list)
@@ -47,12 +45,17 @@ namespace Day13
             }
 
             var gridRowChanged = FindRowMatches(grid, hasMirrorRows);
+
+            var listOfResults = new List<int>
+            {
+                0
+            };
             foreach (var hasMirrorRow in hasMirrorRows)
             {
                 if (CheckAllMirrosRow(grid, hasMirrorRow))
                 {
                     Console.WriteLine($"Result: {(hasMirrorRow.Item1 + 1) * 100}");
-                    return (hasMirrorRow.Item1 + 1) * 100;
+                    listOfResults.Add((hasMirrorRow.Item1 + 1) * 100);
                 }
             }
 
@@ -63,17 +66,12 @@ namespace Day13
                 if (CheckAllMirrosCol(grid, hasMirrorCol))
                 {
                     Console.WriteLine($"Result: {hasMirrorCol.Item1 + 1}");
-                    return hasMirrorCol.Item1 + 1;
+                    listOfResults.Add((hasMirrorCol.Item1 + 1));
                 }
             }
 
-            if(hasMirrorCols.Count > 0 && hasMirrorRows.Count > 0)
-            {
-                Console.WriteLine($"To many mirrors. Col mirror {hasMirrorCols.Count} row mirrors: {hasMirrorRows.Count}");
-            }
-
             Console.WriteLine($"Result: 0");
-            return 0;
+            return listOfResults.Max();
         }
 
         private bool CheckAllMirrosCol(char[][] grid, Tuple<int, int> hasMirrorCol)
@@ -94,16 +92,7 @@ namespace Day13
                         }
                     }
 
-                    if (incorrectValues.Count == 1)
-                    {
-                        grid[incorrectValues[0]][col] = grid[incorrectValues[0]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    }else if (incorrectValues.Count == 1)
-                    {
-                        grid[incorrectValues[0]][col] = grid[incorrectValues[0]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                        grid[incorrectValues[1]][col] = grid[incorrectValues[1]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    }
-
-                    if (incorrectValues.Count > 2)
+                    if (incorrectValues.Count > 1)
                     {
                         isMirrored = false;
                     }
@@ -133,18 +122,7 @@ namespace Day13
                         }
                     }
 
-                    if (incorrectValues.Count == 1)
-                    {
-                        grid[row][incorrectValues[0]] = grid[row][incorrectValues[0]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    }
-                    else if (incorrectValues.Count == 2)
-                    {
-                        grid[row][incorrectValues[0]] = grid[row][incorrectValues[0]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                        grid[row][incorrectValues[1]] = grid[row][incorrectValues[1]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-
-                    }
-
-                    if (incorrectValues.Count > 2)
+                    if (incorrectValues.Count > 1)
                     {
                         isMirrored = false;
                     }
@@ -170,18 +148,7 @@ namespace Day13
                     }
                 }
 
-                if (incorrectValues.Count == 1)
-                {
-                    grid[incorrectValues[0]][col] = grid[incorrectValues[0]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    gridChanged = true;
-                }else if (incorrectValues.Count == 1)
-                {
-                    grid[incorrectValues[0]][col] = grid[incorrectValues[0]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    grid[incorrectValues[1]][col] = grid[incorrectValues[1]][col].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                }
-
-                if (incorrectValues.Count <= 2)
-                {
+                if (incorrectValues.Count > 1) { 
                     hasMirrorCols.Add(new Tuple<int, int>(col, col + 1));
                 }
             }
@@ -321,17 +288,7 @@ namespace Day13
                     }
                 }
 
-                if (incorrectValues.Count == 1)
-                {
-                    grid[row][incorrectValues[0]] = grid[row][incorrectValues[0]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    gridChanged = true;
-                }else if (incorrectValues.Count == 2)
-                {
-                    grid[row][incorrectValues[0]] = grid[row][incorrectValues[0]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                    grid[row][incorrectValues[1]] = grid[row][incorrectValues[1]].Equals(char.Parse(".")) ? char.Parse("#") : char.Parse(".");
-                }
-
-                if (incorrectValues.Count <= 2)
+                if (incorrectValues.Count > 1)
                 {
                     hasMirrorRows.Add(new Tuple<int, int>(row, row + 1));
                 }

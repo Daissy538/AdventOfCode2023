@@ -25,7 +25,7 @@ namespace Day13Tests
         }
 
         [Fact]
-        public void Find_Vertical_Mirror2_With_Swap()
+        public void Find_Horizontal_Mirror2_With_Swap()
         {
             var list = new List<string>()
            {
@@ -42,6 +42,36 @@ namespace Day13Tests
             var leftAmount = mirror.FindMirror2(list);
 
             Assert.Equal(300, leftAmount);
+        }
+
+        [Fact]
+        public void Find_Vertical_Mirror2_long()
+        {
+            var list = new List<string>()
+           {
+                "###.##.##",
+                "##.####.#",
+                "##.#..#.#",
+                "####..###",
+                "....##...",
+                "##.#..#.#",
+                "...#..#..",
+                "##..###.#",
+                "##......#",
+                "##......#",
+                "..#.##.#.",
+                "...#..#..",
+                "##.####.#",
+                "....##...",
+                "...####..",
+                "....##...",
+                "##.####.#",
+           };
+
+            var mirror = new Mirror();
+            var leftAmount = mirror.FindMirror2(list);
+
+            Assert.Equal(6, leftAmount);
         }
 
         [Fact]

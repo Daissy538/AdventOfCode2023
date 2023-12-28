@@ -21,7 +21,11 @@ Console.WriteLine($"Answer Day 10 Answer 1: {result} time: {sw.ElapsedMillisecon
 
 Stopwatch sw2 = new Stopwatch();
 sw2.Start();
+var ground2 = new Ground();
+var startNode2 = ground2.LoadGround(currentLint);
+ground.LoadAllConnectedPipes(startNode);
+var result2 = ground.FindTheNests();
 sw2.Stop();
 
 
-Console.WriteLine($"Answer Day 10 Answer 1:  time: {sw2.ElapsedMilliseconds} ms");
+Console.WriteLine($"Answer Day 10 Answer 1: {result2} time: {sw2.ElapsedMilliseconds} ms");

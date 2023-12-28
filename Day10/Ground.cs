@@ -1,10 +1,11 @@
 ﻿
-
-using System.Collections.Generic;
-using System.Xml.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Day10
 {
+
+    //To high  825
+
     public enum PipeType
     {
         VerticalPipe,
@@ -21,7 +22,7 @@ namespace Day10
 
     public class Pipe
     {
-        public int[] Index { get; set; }
+        public Tuple<int, int> Index { get; set; }
         public PipeType Type { get; set; }
     }
 
@@ -43,15 +44,12 @@ namespace Day10
             { "S", PipeType.StartingPipe }
         };
 
-        public LinkedList<Pipe> LoadAllConnectedPipes(int[] currentLocation)
+        public LinkedList<Pipe> LoadAllConnectedPipes(Tuple<int, int> currentLocation)
         {
             var startNode = new Pipe()
             {
-                Index = [
-                    currentLocation[0],
-                    currentLocation[1]
-                ],
-                Type = pipes[currentLocation[0]][currentLocation[1]]
+                Index = new(currentLocation.Item1, currentLocation.Item2),
+                Type = pipes[currentLocation.Item1][currentLocation.Item2]
             };
 
             ConnectedPipes.AddFirst(startNode);
@@ -61,11 +59,11 @@ namespace Day10
 
             while (looping)
             {
-                var XPipe1 = currentNode.Value.Index[0];
-                var YPipe1 = currentNode.Value.Index[1];
+                var XPipe1 = currentNode.Value.Index.Item1;
+                var YPipe1 = currentNode.Value.Index.Item2;
 
-                var XPipe2 = currentNode.Value.Index[0];
-                var YPipe2 = currentNode.Value.Index[1];
+                var XPipe2 = currentNode.Value.Index.Item1;
+                var YPipe2 = currentNode.Value.Index.Item2;
 
 
                 switch (currentNode.Value.Type)
@@ -87,7 +85,6 @@ namespace Day10
                         YPipe2--;
                         break;
                     case PipeType.SouthEastPipe:
-                    case PipeType.StartingPipe:
                         XPipe1++;
                         YPipe2++;
                         break;
@@ -101,16 +98,11 @@ namespace Day10
                 }
 
                 Pipe? nextPipe;
-                if (currentNode.Previous != null && !currentNode.Previous.Value.Index.SequenceEqual([XPipe1, YPipe1]))
+                if (currentNode.Previous != null && !currentNode.Previous.Value.Index.Equals(new Tuple<int, int>(XPipe1, YPipe1)))
                 {
-
-
                     nextPipe = new Pipe()
                     {
-                        Index = [
-                                 XPipe1,
-                            YPipe1,
-                        ],
+                        Index = new(XPipe1, YPipe1),
                         Type = pipes[XPipe1][YPipe1],
                     };
                 }
@@ -118,15 +110,17 @@ namespace Day10
                 {
                     nextPipe = new Pipe()
                     {
-                        Index = [
-                            XPipe2,
-                            YPipe2,
-                        ],
+                        Index = new(XPipe2, YPipe2),
                         Type = pipes[XPipe2][YPipe2],
                     };
                 }
 
-                if (nextPipe.Type == PipeType.StartingPipe)
+                var hasConnection = CheckIfItHasConnection(currentNode.Value.Index, nextPipe.Index, nextPipe.Type);
+                if (!hasConnection)
+                {
+                    looping = false;
+                }
+                else if (ConnectedPipes.Any(p => p.Index.Item1 == nextPipe.Index.Item1 && p.Index.Item2 == nextPipe.Index.Item2))
                 {
                     looping = false;
                 }
@@ -140,21 +134,39 @@ namespace Day10
             return ConnectedPipes;
         }
 
-        public int[] LoadGround(List<string> list)
+        public new Tuple<int, int> LoadGround(List<string> list)
         {
-            var startLocation = new int[2];
-            for(var i = 0; i < list.Count(); i++)
+            Tuple<int, int> startLocation = new Tuple<int, int>(0, 0);
+            for (var i = 0; i < list.Count(); i++)
             {
-                List<PipeType> pipeRow = (List<PipeType>) list[i].Select((c, j) => {
+                List<PipeType> pipeRow = (List<PipeType>)list[i].Select((c, j) => {
                     var pipe = pipeMap[c.ToString()];
 
                     if (pipe.Equals(PipeType.StartingPipe))
-                    startLocation = [i,j];
+                    {
+                        startLocation = new Tuple<int, int>(i, j);
+
+                        var rigth = j + 1 <= list[i].Length - 1 ? CheckIfItHasConnection(startLocation, new Tuple<int, int>(i, j + 1), pipeMap[list[i][j + 1].ToString()]): false;
+                        var left = j- 1 >= 0 ? CheckIfItHasConnection(startLocation, new Tuple<int, int>(i, j -1), pipeMap[list[i][j - 1].ToString()]) : false;
+                        var up = i - 1 >= 0? CheckIfItHasConnection(startLocation, new Tuple<int, int>(i - 1, j), pipeMap[list[i - 1][j].ToString()]): false;
+                        var down = i + 1 <= list.Count-1 ? CheckIfItHasConnection(startLocation, new Tuple<int,int>(i+1,j), pipeMap[list[i + 1][j].ToString()]): false;
+
+                        pipe = ((rigth, left, up, down)) switch
+                        {
+                            (true, true, false, false) => PipeType.HorizontalPipe,
+                            (false, false, true, true) => PipeType.VerticalPipe,
+                            (true, false, true, false) => PipeType.NorthEastPipe,
+                            (true, false, false, true) => PipeType.SouthEastPipe,
+                            (false, true, true, false) => PipeType.NorthWestPipe,
+                            (false, true, false, true) => PipeType.SouthWestPipe,
+                            _ => throw new NotImplementedException(),
+                        };
+                    }
 
                     return pipe;
-                    }).ToList();
+                }).ToList();
 
-                
+
                 pipes.Add(pipeRow);
             }
 
@@ -166,37 +178,80 @@ namespace Day10
             return ConnectedPipes.Count / 2;
         }
 
-        public void LoadNegatives()
-        {
-            
-            for (var i = 0; i < pipes.Count(); i++)
+        private bool CheckIfItHasConnection(Tuple<int, int> current, Tuple<int, int> nextPipe, PipeType pipe){
+
+            int rowDif = nextPipe.Item1 - current.Item1;
+            int colDif = nextPipe.Item2 - current.Item2;
+
+            //1 0 down
+            //-1 0 up
+            //0 1 rigth
+            //0 -1 left
+
+            switch (pipe)
             {
-                for(var j = 0; j < pipes[i].Count(); j++)
+                case PipeType.SouthEastPipe when colDif == 0 && rowDif == -1:
+                case PipeType.SouthWestPipe when colDif == 0 && rowDif == -1:
+                case PipeType.VerticalPipe when colDif == 0 && rowDif == -1:
+                    return true;
+                case PipeType.NorthEastPipe when colDif == 0 && rowDif == 1:
+                case PipeType.NorthWestPipe when colDif == 0 && rowDif == 1:
+                case PipeType.VerticalPipe when colDif == 0 && rowDif == 1:
+                    return true;
+                case PipeType.SouthWestPipe when rowDif == 0 && colDif == 1:
+                case PipeType.NorthWestPipe when rowDif == 0 && colDif == 1:
+                case PipeType.HorizontalPipe when rowDif == 0 && colDif == 1:
+                    return true;
+                case PipeType.NorthEastPipe when rowDif == 0 && colDif == -1:
+                case PipeType.SouthEastPipe when rowDif == 0 && colDif == -1:
+                case PipeType.HorizontalPipe when rowDif == 0 && colDif == -1:
+                    return true;
+                default: return false;
+            };            
+        }
+
+        private List<Tuple<int, int>> corners = new List<Tuple<int, int>>();
+
+        public double FindTheNests()
+        {
+            foreach (var pipe in ConnectedPipes) {
+                switch (pipe.Type)
                 {
-                    var pipe = pipes[i][j];
-
-                    if (pipe.Equals(PipeType.Ground))
-                    {
-                        pipesWithNegatives[i].Add(PipeType.OutSideLoop);
-                    }
+                    case PipeType.StartingPipe:
+                    case PipeType.SouthEastPipe:
+                    case PipeType.NorthEastPipe:
+                    case PipeType.NorthWestPipe:
+                    case PipeType.SouthWestPipe:
+                        corners.Add(new Tuple<int, int>(pipe.Index.Item1, pipe.Index.Item2));
+                        break;
                 }
-                List<PipeType> pipeRow = (List<PipeType>)pipes[i].Select((c, j) => {
-                    
-                    if(c == PipeType.Ground)
-                    {
-                        return 
-                    }
-
-                    
-
-                    return pipe;
-                }).ToList();
-
-
-                pipesWithNegatives.Add(pipeRow);
             }
 
-            return startLocation;
+            corners.Add(corners.First());
+
+            return ShoeLaceCalculation(corners);
         }
+
+        public double ShoeLaceCalculation(List<Tuple<int, int>> corners)
+        {
+            var totals = new List<int>();
+
+            for (var row = 0; row < corners.Count - 1; row++)
+            {
+                var current = corners[row];
+                var next = corners[row + 1];
+
+                var left = (current.Item2 * next.Item1);
+                var rigth = (current.Item1 * next.Item2);
+
+                totals.Add(left - rigth);
+            }
+
+            double area = Math.Abs(totals.Sum());
+
+            return (area - ConnectedPipes.Count()) / 2 + 1;
+        }
+
+
     }
 }
